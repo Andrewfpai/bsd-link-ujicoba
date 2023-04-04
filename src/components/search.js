@@ -123,7 +123,7 @@ export default function Search(){
               
                 setRute0(rute0 => [...rute0, halteTanpa_]);
                 
-                if ((Object.keys(data?.semua_rute[i].halte)[Object.keys(data?.semua_rute[i].halte).length-1] === keyFix || Object.keys(data?.semua_rute[i].halte)[Object.keys(data?.semua_rute[i].halte).length-1] !== titikTujuan.replace(/ /g, "_") )){
+                if ((Object.keys(data?.semua_rute[i].halte)[Object.keys(data?.semua_rute[i].halte).length-1] === keyFix && Object.keys(data?.semua_rute[i].halte)[Object.keys(data?.semua_rute[i].halte).length-1] !== titikTujuan.replace(/ /g, "_") )){
                   
                   setRute0([])
                 }
