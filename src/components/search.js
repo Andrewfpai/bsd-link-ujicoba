@@ -17,13 +17,20 @@ export default function Search(){
     const ruteTitikAwal = useRef([])
     const ruteTitikTujuan = useRef([])
 
-    const [rute0, setRute0] = useState([])
-    const [halteTransit1, setHalteTransit1] = useState([])
-    // const halteTransit1B = useRef([])
-    const [rute1Back, setRute1Back] = useState([])
-    const [halteTransitBack, setHalteTransitBack] = useState([])
-    const halteTransitDuaRute = useRef([])
+    const [ruteAwalMentah, setRuteAwalMentah] = useState([])
+    const [halteTransitAwalMentah, setHalteTransitAwalMentah] = useState([])
+   
+    const [ruteTujuanMentah, setRuteTujuanMentah] = useState([])
+    const [halteTransitTujuanMentah, setHalteTransitTujuanMentah] = useState([])
 
+    const ruteTengahMentah = useRef([])
+    const ruteTengahFinal = useRef([])
+  
+    const [halteTransitTengahMentah, setHalteTransitTengahMentah] = useState([])
+
+    const halteTransitDuaRute = useRef([])
+    
+    const testRuteTersedia = useRef([])
     
     const [ruteAwalFinal, setruteAwalFinal] = useState([]) //Rute 1 Final
     const [ruteTujuanFinal, setruteTujuanFinal] = useState([]) // Rute 2 Final
@@ -97,11 +104,11 @@ export default function Search(){
         //Untuk buat rute dari titik awal ke tujuan --> hasil = ["titikAwal", "halte2 lain", "Tujuan"]
         useEffect(() => {
           
-          setRute0([]) 
-          setHalteTransit1([]) // selalu reset ketika titik awal dan tujuan berubah
+          setRuteAwalMentah([]) 
+          setHalteTransitAwalMentah([]) // selalu reset ketika titik awal dan tujuan berubah
    
-          setRute1Back([]) 
-          setHalteTransitBack([]) 
+          setRuteTujuanMentah([]) 
+          setHalteTransitTujuanMentah([]) 
       
           let done = false;
           let done2 = false;
@@ -113,37 +120,50 @@ export default function Search(){
             for (let key in data?.semua_rute[i]?.halte) { 
               
               let keyFix = key.replace(/_Second/g, "")
+              let halteAkhir = Object.keys(data?.semua_rute[i].halte)[Object.keys(data?.semua_rute[i].halte).length-1].replace(/_Second/g, "")
               
               const halteTanpa_ = keyFix.replace(/_/g, " ");
-              console.log(halteTanpa_)
+              
              
               if ((halteTanpa_=== titikAwal && titikTujuan) || defaultState){ //Kalo belum sesuai titik awal jangan dibuat rutenya dulu, tapi kalo udah lewat boleh, mencegah kebuat rute yang berbalik arus
                 
                 defaultState = true
-              
-                setRute0(rute0 => [...rute0, halteTanpa_]);
+
+                if (key.includes("Second") && titikAwal === halteTanpa_){
+                    setRuteAwalMentah([])
+                    
+                  }
+               
+                setRuteAwalMentah(ruteAwalMentah => [...ruteAwalMentah, halteTanpa_]);
                 
-                if ((Object.keys(data?.semua_rute[i].halte)[Object.keys(data?.semua_rute[i].halte).length-1] === keyFix && Object.keys(data?.semua_rute[i].halte)[Object.keys(data?.semua_rute[i].halte).length-1] !== titikTujuan.replace(/ /g, "_") )){
-                  
-                  setRute0([])
+                
+                if ((Object.keys(data?.semua_rute[i].halte)[Object.keys(data?.semua_rute[i].halte).length-1] === key && halteAkhir !== titikTujuan.replace(/ /g, "_") )){
+                  setRuteAwalMentah([])
                 }
 
+                // if ((Object.keys(data?.semua_rute[i].halte)[Object.keys(data?.semua_rute[i].halte).length-1] !== titikTujuan)){
+                //   setRuteAwalMentah([])
+                // }
+                // if (key.includes("Second")){
+                //     setRuteAwalMentah([])
+                //     setRuteAwalMentah(ruteAwalMentah => [...ruteAwalMentah, halteTanpa_])
+                //   }
 
-                if(halteTanpa_ === titikTujuan && rute0){
-                 
-                  
+
+                if(halteTanpa_ === titikTujuan && ruteAwalMentah){
                   done = true
-                  // setRute1Back([]);
-                  // setHalteTransitBack([]);
-                  setHalteTransit1([]);
-            
+                  // setRuteTujuanMentah([]);
+                  // setHalteTransitTujuanMentah([]);
+                  setHalteTransitAwalMentah([]);
 
                   break;
                 }
+                
+
                 if (data?.halte_transit.includes(halteTanpa_)){ //jika ada halte yang termasuk di dalam array halte transit, masukkin ke array
                   
                   
-                  setHalteTransit1(halteTransit1 => [...halteTransit1, halteTanpa_+" "+i]);
+                  setHalteTransitAwalMentah(halteTransitAwalMentah => [...halteTransitAwalMentah, halteTanpa_+" "+i]);
          
                 }
               }
@@ -166,12 +186,12 @@ export default function Search(){
 
              
               if ( halteAkhir === key && halteTanpa_ !== titikTujuan){ // Jika halte terakhir di suatu rute dan tidak termasuk ke halte transit penyambung, kosongin/reset
-                setRute1Back([])
-                setHalteTransitBack([])
+                setRuteTujuanMentah([])
+                setHalteTransitTujuanMentah([])
                 break
               }
               
-              setRute1Back(rute1Back => [...rute1Back, halteTanpa_])
+              setRuteTujuanMentah(ruteTujuanMentah => [...ruteTujuanMentah, halteTanpa_])
 
               
 
@@ -184,7 +204,7 @@ export default function Search(){
 
               if (data?.halte_transit.includes(halteTanpa_)){ //jika ada halte yang termasuk di dalam array halte transit, masukkin ke array
                 
-                setHalteTransitBack(halteTransitBack => [...halteTransitBack, halteTanpa_+" "+i]);
+                setHalteTransitTujuanMentah(halteTransitTujuanMentah => [...halteTransitTujuanMentah, halteTanpa_+" "+i]);
               
               }
             }
@@ -199,7 +219,7 @@ export default function Search(){
           halteTransitDuaRute.current = []
           // setruteTujuanFinal([])
 
-          halteTransit1.forEach(halte=>{
+          halteTransitAwalMentah.forEach(halte=>{
             let reformatTransit = halte.slice(0, -2)
             halteTransit1B.push(reformatTransit)
           })
@@ -207,7 +227,7 @@ export default function Search(){
           let done = false
           // const halteTransit2 = {}
 
-          for (let halte of halteTransitBack){
+          for (let halte of halteTransitTujuanMentah){
           
             let reformatTransit = halte.slice(0, -2) //PERBAIKAN 
             
@@ -221,7 +241,7 @@ export default function Search(){
             }
             
           }
-        }, [halteTransit1, halteTransitBack]);
+        }, [halteTransitAwalMentah, halteTransitTujuanMentah]);
         
 
         useEffect(() => {
@@ -233,7 +253,7 @@ export default function Search(){
           let done2 = false
           let done3 = false
 
-           for (let halte of halteTransit1){
+           for (let halte of halteTransitAwalMentah){
             
             let defaultState = false
             let ruteAwal1 = halte.charAt(halte.length-1)
@@ -242,24 +262,28 @@ export default function Search(){
            
             for (let key in data?.semua_rute[ruteAwal1]?.halte) { 
                 
-                if (key.includes("Second")){
-                    key.replace("_Second", "")
-                  }
-                const halteTanpa_ = key.replace(/_/g, " ");
+                let keyFix = key.replace(/_Second/g, "")
+                const halteTanpa_ = keyFix.replace(/_/g, " ");
                 
                 
                 if ((halteTanpa_=== titikAwal) || defaultState){ //Kalo belum sesuai titik awal jangan dibuat rutenya dulu, tapi kalo udah lewat boleh, mencegah kebuat rute yang berbalik arus
-                  
+                 
                   defaultState = true
 
                   setruteAwalFinal(rute1 => [...rute1, halteTanpa_])
                   
                   if ( halteAkhir === key && !halteTransitDuaRute.current.includes(halteTanpa_)){ // Jika halte terakhir di suatu rute dan tidak termasuk ke halte transit penyambung, kosongin/reset
+                    console.log(halteTanpa_)
                     setruteAwalFinal([])
                   }
                   if (halteTransitDuaRute.current.at(-1) === halteTanpa_){ //jika halte berikut sama ada di dalam halte transit penyambung paling akhir, artinya loopingnya harus selesai
                     done = true
                     break;
+                  }
+                  
+                  if (key.includes("Second") && halteAkhir !== key){
+                    setruteAwalFinal([])
+                    setruteAwalFinal(rute1 => [...rute1, halteTanpa_])
                   }
 
                   // if(halteTransitDuaRute.current.includes(halteTanpa_)){
@@ -285,7 +309,7 @@ export default function Search(){
 
 
 
-          for (let halte of halteTransitBack){
+          for (let halte of halteTransitTujuanMentah){
           
             let defaultState = false
             let ruteBack1 = halte.charAt(halte.length-1)
@@ -302,7 +326,7 @@ export default function Search(){
                   setruteTujuanFinal(ruteTujuanFinal => [...ruteTujuanFinal, halteTanpa_])
 
                   if(halteTanpa_=== titikTujuan && ruteTujuanFinal){
-                    console.log("TES")
+                  
                     // setruteTujuanFinal(ruteTujuanFinal => [...ruteTujuanFinal, "---"]);
                     done2 = true
                     break;
@@ -318,7 +342,138 @@ export default function Search(){
 
           }
 
-        }, [halteTransit1, halteTransitBack]);
+        }, [halteTransitAwalMentah, halteTransitTujuanMentah]);
+
+
+
+
+
+        useEffect(() => {
+          let ruteGabungan = ruteTitikAwal.current.concat(ruteTitikTujuan.current)
+          let done = false
+          let halteTransitAwalReformat = []
+          let halteTransitTujuanReformat = []
+          
+
+          ruteTengahMentah.current = []
+          ruteTengahFinal.current = []
+          // console.log("COBA",halteTransitDuaRute.current)
+
+
+          if (halteTransitDuaRute.current.length === 0){
+
+            halteTransitAwalMentah.forEach(halte=>{
+              let reformatTransit = halte.slice(0, -2)
+              halteTransitAwalReformat.push(reformatTransit)
+            })
+            
+            halteTransitTujuanMentah.forEach(halte=>{
+              let reformatTransit = halte.slice(0, -2)
+              halteTransitTujuanReformat.push(reformatTransit)
+            })
+
+
+            
+            for (let i = 0; i < data?.semua_rute.length; i++) {
+              // console.log(i)
+              let defaultState = false
+              let halteAkhir = Object.keys(data?.semua_rute[i].halte)[Object.keys(data?.semua_rute[i].halte).length-1]
+
+              if (!ruteGabungan.includes(i)){
+                
+                for (let key in data?.semua_rute[i]?.halte){
+
+                  let keyFix = key.replace(/_Second/g, "")
+                  const halteTanpa_ = keyFix.replace(/_/g, " ");  
+                  
+                  
+                  if (halteTransitAwalReformat.includes(halteTanpa_) || defaultState){
+                    
+                    // console.log("MASUK2")
+                    
+                    ruteTengahMentah.current.push(halteTanpa_)
+                    defaultState = true
+
+                    if(halteTransitTujuanReformat.includes(halteTanpa_)){
+                      
+                      done = true
+                      break;
+                    }
+                    
+                    if (key === halteAkhir && !done){
+                      ruteTengahMentah.current = []
+                    }
+                    // console.log(ruteTengahMentah.current)
+                  } 
+                  
+              }// end loop
+              
+            }
+
+            
+            
+              if (done){break}
+            }
+
+              if (ruteTengahMentah.current.length !== 0){
+                  
+                // console.log("BREAK",ruteTengahMentah.current.slice().reverse())
+                for (let halte of ruteTengahMentah.current.slice().reverse()){
+                
+                  
+                  // console.log("halte",halte)
+                  ruteTengahFinal.current.push(halte)
+                  
+                  
+                  if (halteTransitAwalReformat.includes(halte)){
+                    // console.log("halte",halte)
+                    ruteTengahFinal.current.reverse()
+                    break
+                  }
+                
+      
+                }
+                
+              }
+
+          }
+        }, [halteTransitDuaRute.current, halteTransitAwalMentah]);
+
+        // if ((halteTanpa_=== titikAwal && titikTujuan) || defaultState){ //Kalo belum sesuai titik awal jangan dibuat rutenya dulu, tapi kalo udah lewat boleh, mencegah kebuat rute yang berbalik arus
+                
+        //   defaultState = true
+
+        //   if (key.includes("Second") && titikAwal === halteTanpa_){
+        //       setRuteAwalMentah([])
+              
+        //     }
+         
+        //   setRuteAwalMentah(ruteAwalMentah => [...ruteAwalMentah, halteTanpa_]);
+          
+          
+        //   if ((Object.keys(data?.semua_rute[i].halte)[Object.keys(data?.semua_rute[i].halte).length-1] === key && halteAkhir !== titikTujuan.replace(/ /g, "_") )){
+        //     setRuteAwalMentah([])
+        //   }
+
+
+        //   if(halteTanpa_ === titikTujuan && ruteAwalMentah){
+        //     done = true
+       
+        //     setHalteTransitAwalMentah([]);
+
+        //     break;
+        //   }
+          
+
+        //   if (data?.halte_transit.includes(halteTanpa_)){ //jika ada halte yang termasuk di dalam array halte transit, masukkin ke array
+            
+            
+        //     setHalteTransitAwalMentah(halteTransitAwalMentah => [...halteTransitAwalMentah, halteTanpa_+" "+i]);
+   
+        //   }
+        // }
+
+
 
         
   
@@ -348,17 +503,21 @@ export default function Search(){
 
 
        
-        {console.log("rute 0","=",rute0)} 
+        {console.log("rute 0","=",ruteAwalMentah)} 
         {console.log("rute 1 JADI","=",ruteAwalFinal)} 
-        {console.log("rute 1 back","=",rute1Back)} 
-        {console.log("halte transit","=",halteTransit1)} 
-        {console.log("halte transit back","=",halteTransitBack)} 
+        {console.log("rute 1 back","=",ruteTujuanMentah)} 
+        {console.log("halte transit","=",halteTransitAwalMentah)} 
+        {console.log("halte transit back","=",halteTransitTujuanMentah)} 
         {console.log("transit Match","=",halteTransitDuaRute.current)} 
         {console.log("Rute 2 JADI","=",ruteTujuanFinal)} 
+        {console.log("====================")} 
+        {console.log("Rute Transit Tengah","=",ruteTengahMentah.current)} 
+        {console.log("Rute Gabungan","=",halteTransitTengahMentah)} 
+        {console.log("rute Final Tengah","=",ruteTengahFinal.current)} 
         {/* {console.log("halte transit 2","=",halteTransit2)} 
         {console.log("halte transit 3","=",halteTransit3)} 
         {console.log("Rute Lalu","=",halteLalu)}  */}
-        {console.log("====================")} 
+        {console.log("====================================")} 
 
         <div className="tujuan">
           <input
