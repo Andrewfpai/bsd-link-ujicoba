@@ -4,13 +4,21 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { ChakraProvider } from '@chakra-ui/react'
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
+import { BrowserRouter } from "react-router-dom";
+
+const queryClient = new QueryClient()
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <ChakraProvider>
-      <App />
-    </ChakraProvider>
+    <BrowserRouter>
+      <ChakraProvider>
+        <QueryClientProvider client={queryClient}>
+          <App />
+        </QueryClientProvider>
+      </ChakraProvider>
+    </BrowserRouter>
   </React.StrictMode>
 );
 

@@ -1,23 +1,28 @@
 import './App.css';
 import Search from './components/search'
-
-import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
-
-
+import ruteContext from './context/ruteContext'
+import {useState} from 'react'
 
 
-const queryClient = new QueryClient()
+
 
 function App() {
+
+  const [ruteFinal, setRuteFinal] = useState([])
+
+  console.log("HELOOO",ruteFinal)
+
   return (
-    <QueryClientProvider client={queryClient}>
+    <ruteContext.Provider value={{ ruteFinal, setRuteFinal }}> 
 
       <div className="d-flex flex-row">
         <Search />
-  
+        {ruteFinal.map((halte)=>{
+          return <p>{halte}-</p>
+        })}
       </div>
-      
-    </QueryClientProvider>
+
+    </ruteContext.Provider>
   )
 }
 
