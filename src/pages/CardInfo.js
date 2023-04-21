@@ -1,16 +1,37 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { useLocation } from 'react-router-dom';
 import Logo from '../assets/image/Logo.png'
 import Menu from '../assets/icon/hamburger.png'
 import BackIcon from '../assets/icon/angle-small-left.png'
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/navbar'
+
 
 function CardInfo() {
 
+  const [isNavbarClicked, setIsNavbarClicked] = useState(false)
+
+
   const navigate = useNavigate();
   const location = useLocation();
-  console.log(location)
+ 
   const state = location.state
+
+  function handleClick() {
+    if (state !== null) {
+      navigate('/search', {
+        state: {
+          data: state,
+          index: state.index
+        }
+      })
+    }
+  }
+  function sendDataToHome(isClicked){
+    setIsNavbarClicked(isClicked)
+  
+  }
+
  
 
     return (
@@ -20,10 +41,7 @@ function CardInfo() {
 
 
           <div className="topper pb-10 ">
-            <div className="flex justify-between mx-4 items-center mt-7" >
-              <img className="w-44 " src={Logo} alt="Logo" onClick={()=>{navigate('/')}}/>
-              <img className="w-7 h-9 mr-2" src={Menu} alt="Menu icon"/>
-            </div>
+            <Navbar className='z-50' sendDataToHome={sendDataToHome}/>
 
           </div >
         
@@ -31,8 +49,8 @@ function CardInfo() {
 
             <div className="flex justify-center" >
     
-              <div class="w-[22rem] flex-grow flex flex-1 flex-col border-3 border-l border-r border-b rounded-[25px] overflow-hidden shadow-lg">
-                    <img class="w-full flex-grow flex-1" src={state && state?.data?.[state.index].images} alt="Sunset in the mountains"/>
+              <div class="w-[22rem]  flex-grow flex flex-1 flex-col rounded-[25px] overflow-hidden shadow-lg">
+                    <img class="w-full h-[200px] flex-grow flex-1 " src={state && state?.data?.[state.index].images} alt="Sunset in the mountains"/>
               </div>
             </div>
 
@@ -70,20 +88,10 @@ function CardInfo() {
             </div>
 
             <div>
-              <button className="bg-yellow text-black hover:opacity-70 font-bold py-2 px-14 rounded-full ">
+              <button onClick={()=>{handleClick()}} className="bg-yellow text-black hover:opacity-70 font-semibold py-2 px-14 rounded-full ">
                 SET AS DESTINATION
               </button>
             </div>
-
-            
-
-            
-
-          
-              {/* <div>Open Hours:</div>
-              <div>{state && state?.data?.[state.index].openHours}</div>
-              <div>About:</div>
-            <div>{state && state?.data?.[state.index].about}</div> */}
             </div>
           </div>
 

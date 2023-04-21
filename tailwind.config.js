@@ -7,6 +7,17 @@ module.exports = {
   ],
   theme: {
 
+    screens: {
+      'tablet': '640px',
+      // => @media (min-width: 640px) { ... }
+
+      'laptop': '1024px',
+      // => @media (min-width: 1024px) { ... }
+
+      'desktop': '1280px',
+      // => @media (min-width: 1280px) { ... }
+    },
+
     extend: {
       colors: {
         "orange":"fd8100",
@@ -29,7 +40,8 @@ module.exports = {
     
 
     fontFamily: {
-      'Poppins': ['Poppins', 'sans-serif']
+      'Poppins': ['Poppins', 'sans-serif'],
+      'Lato': ['Lato', 'sans-serif']
     },
 
 
@@ -40,6 +52,7 @@ module.exports = {
       }],
       '20':'20px',
       '16':'16px',
+      '14':'14px',
       '12':'12px',
   
 

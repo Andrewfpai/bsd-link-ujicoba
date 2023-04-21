@@ -4,7 +4,8 @@ import Card from '../components/Card'
 import { useNavigate } from 'react-router-dom';
 import Logo from '../assets/image/Logo.png'
 import Menu from '../assets/icon/hamburger.png'
-import Search from '../assets/icon/search.png'
+import Navbar from '../components/navbar'
+
 
 
 function Information() {
@@ -19,22 +20,26 @@ function Information() {
               .then(res => res.json())
         },
           })
+
+    const [isNavbarClicked, setIsNavbarClicked] = useState(false)
+
+
+    function sendDataToHome(isClicked){
+      setIsNavbarClicked(isClicked)
+      console.log(isClicked)
+    }
      
 
   return (
     <div className='bg-yellow h-screen  container mx-auto text-center '>
-
       <div className="flex justify-center flex-col h-full parent relative">
+      <Navbar className='z-50' sendDataToHome={sendDataToHome}/>
 
 
-        <div className="topper pb-16">
-          <div className="flex justify-between mx-4 items-center mb-12 mt-10" >
-            <img className="w-44 " src={Logo} alt="Logo" onClick={()=>{navigate('/')}}/>
-            <img className="w-7 h-9 mr-2" src={Menu} alt="Menu icon"/>
-          </div>
+  
 
-          <div className="text-4xl font-bold text-center leading-tight">Where would you <br/> like to go?</div>
-        </div>
+          <div className="mt-10 pb-16 text-4xl font-bold text-center leading-tight z-0 text-center">Where would you <br/> like to go?</div>
+     
 
         <div className="bottomter flex-1 bg-lychee">
           {/* <div className="-mt-5 border-teal border-2 bg-white rounded-[25px] relative border-teal text-gray-600 focus-within:text-gray-400">
@@ -54,7 +59,7 @@ function Information() {
             <div className="text-2xl font-extralight text-left ml-10 mt-10 mb-3">Top Places :</div>
 
 
-            <div class="flex mr-8 overflow-x-scroll pb-10 hide-scroll-bar">
+            <div class="flex overflow-x-scroll pb-10 hide-scroll-bar">
           
           
 

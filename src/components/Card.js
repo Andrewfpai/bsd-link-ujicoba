@@ -22,8 +22,6 @@ function Card({data, index}) {
           }
 
 
-    // console.log(data)
-
   return (
     <div className="flex justify-center " onClick={handleClick}>
     
@@ -31,15 +29,15 @@ function Card({data, index}) {
         <div class="w-80 ml-8 flex-grow flex flex-1 flex-col border-3 border-l border-r border-b rounded-[25px] overflow-hidden shadow-lg">
           
         
-              <img class="w-full flex-grow flex-1" src= {data && data[index].images} alt="Sunset in the mountains"/>
+              <img class="w-full flex-grow flex-1" src= {data && data[index] && data[index].images} alt="Favorite places images"/>
        
 
             <div className="flex flex-col grow flex-1">
             
               <div class="px-6 py-4 text-center">
-                  <div class="font-bold text-2xl -mb-1">{data && data[index].name}</div>
-                  <p class="text-gray-500 text-16">
-                  {data && data[index].category}
+                  <div class="font-bold text-2xl -mb-1">{data &&data[index] && data[index].name}</div>
+                  <p class="text-gray-400 text-16">
+                  {data && data[index] && data[index].category}
                   </p>
               </div>
 

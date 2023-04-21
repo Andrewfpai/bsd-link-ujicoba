@@ -1,20 +1,57 @@
-import {useState, useEffect, useRef, useContext} from 'react'
+import {useState, useEffect, useRef, useContext, useMemo, useCallback} from 'react'
 import { useQuery } from '@tanstack/react-query'
 import useDebounce from '../hooks/useDebounce'
 // import useCreateRoute from '../hooks/useCreateRoute'
 import { Flex, Spacer } from '@chakra-ui/react'
 import ruteContext from '../context/ruteContext'
-import awalTujuan from './context/awalTujuan'
+import awalTujuan from '../context/awalTujuan'
+import Destination from '../assets/icon/target.png'
+import CurrentLoc from '../assets/icon/location.png'
+import Cancel from '../assets/icon/cancel.png'
+import { useNavigate } from 'react-router-dom';
 
 export default function Search(){
 
-  const {ruteFinalContext, setRuteFinalContext} = useContext(ruteContext);
+  const {ruteFinal, setRuteFinal} = useContext(ruteContext);
+  const {noRuteFinal, setNoRuteFinal} = useContext(ruteContext);
+
+
+
+  const options = { timeZone: "Asia/Jakarta", hour: "numeric", minute: "numeric", second: "numeric", hour12: false };
+  const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString([], options));
+  // const [currentTime, setCurrentTime] = useState("05:19");
+ 
+  // const currentTime = useRef('04:00');
+
+  const noRuteAwalMentah = useRef([])
+  const noRuteAwalFinal = useRef([])
+  const noRuteTujuan = useRef([])
+  const noRuteAwalKetiga = useRef([])
+  const noRuteAkhirKetiga = useRef([])
+  const noRuteTengahKetiga = useRef([])
+
+  const jamRuteAwalMentah = useRef([])
+  const jamRuteAwalFinal = useRef([])
+  const jamRuteTujuan = useRef([])
+  const jamTerakhirRute1 = useRef()
+  
+  const jamAwalKetiga = useRef()
+  const jamTengahKetiga = useRef()
+  const jamAkhirKetiga = useRef()
+  const jamTerakhirRute1Ketiga = useRef()
+  const jamTerakhirRute2Ketiga = useRef()
+  const {jamFinal, setJamFinal} = useContext(ruteContext)
+
+
+  const navigate = useNavigate();
 
   const [titikAwal, setTitikAwal] = useState('')
   const [titikTujuan, setTitikTujuan] = useState('')
 
-  const [search, setSearch] = useState('')
-  const [filteredData, setFilteredData] = useState([])
+  const [dataOn, setDataOn] = useState(true);
+  const [search, setSearch] = useState("");
+  const [search2, setSearch2] = useState("");
+  // const [filteredData, setFilteredData] = useState([])
   const debouncedSearchTerm = useDebounce(search, 1000)
   // const createRoute = useCreateRoute(jumlahRute, ruteFinal.current)
   const count = useRef(0);
@@ -48,7 +85,6 @@ export default function Search(){
     const ruteTujuanKetiga = useRef([])
     
     const [ruteDitemukan, setRuteDitemukan] = useState('') // Rute 2 Final
-    const {ruteFinal, setRuteFinal} = useContext(ruteContext); // Rute 2 Final
   
     // const ruteFinal = useRef([])
 
@@ -68,25 +104,48 @@ export default function Search(){
       },
         })
 
+  const handleChange = useCallback((e) => {
+    setSearch(e.target.value);
+   
+  }, [setSearch]);
+  
+  const handleChange2 = useCallback((e) => {
+    setSearch2(e.target.value);
+   
+  }, [setSearch]);
         // untuk filter search bar
-        useEffect(() => {
-          const filtered = data?.nama_halte?.filter(item => {
-            if (debouncedSearchTerm === '') {
-              return item;
+        const filteredData = useMemo(() => {
+          if (!data?.nama_halte) {
+            return [];
+          }
+          return data.nama_halte.filter((item) => {
+            if (search === "") {
+              return true;
             } else {
-          
-              return item?.toLowerCase()?.includes(debouncedSearchTerm.toLowerCase());
+              return item?.toLowerCase()?.includes(search?.toLowerCase());
             }
           });
-   
-          setFilteredData(filtered || []);
-        }, [data, debouncedSearchTerm]);
+        }, [data, search]);
+      
+        const filteredData2 = useMemo(() => {
+          if (!data?.nama_halte) {
+            return [];
+          }
+          return data.nama_halte.filter((item) => {
+            if (search2 === "") {
+              return true;
+            } else {
+              return item?.toLowerCase()?.includes(search2?.toLowerCase());
+            }
+          });
+        }, [data, search2]);
         
 
         //Untuk Nentuin titik Awal ada di rute mana aja --> hasil = [0,1,2]
         useEffect(() => {
           ruteTitikAwal.current = [] // Refresh isi dari rute Awal setiap kali user pilih tujuan baru
           ruteTitikTujuan.current = []
+          
           
           
 
@@ -98,7 +157,6 @@ export default function Search(){
               const halteTanpa_ = keyFix.replace(/_/g, " ");              //akses object "halte" di dalam array "semua_rute"
               
               if (titikAwal === titikTujuan){
-                console.log("YESSSSSS===========================")
                 break
 
               } else if (titikAwal===halteTanpa_ && !ruteTitikAwal.current.includes(index)){
@@ -125,9 +183,13 @@ export default function Search(){
    
           ruteTujuanMentah.current = []
           setHalteTransitTujuanMentah([]) 
+
+          jamRuteAwalMentah.current = []
+         
       
           let done = false;
           let done2 = false;
+          let posisiIndex = ''
           
           for (let i of ruteTitikAwal.current) {
 
@@ -143,18 +205,41 @@ export default function Search(){
              
               if ((halteTanpa_=== titikAwal && titikTujuan) || defaultState){ //Kalo belum sesuai titik awal jangan dibuat rutenya dulu, tapi kalo udah lewat boleh, mencegah kebuat rute yang berbalik arus
                 
+                
+                if(halteTanpa_ ===titikAwal && titikTujuan){ // untuk ambil index array waktu yang sesuai
+                  setCurrentTime(new Date().toLocaleTimeString([], options))
+                  let jamTerdekat = data?.semua_rute[i]?.halte[key].find(jam => jam > currentTime);
+                  let posisi = data?.semua_rute[i]?.halte[key].indexOf(jamTerdekat)
+                  posisiIndex = posisi
+                }
+                
+                let jamTerdekat = data?.semua_rute[i]?.halte[key].at(posisiIndex)
+                jamRuteAwalMentah.current.push(jamTerdekat)
+                
+                
+                
                 defaultState = true
-
+                ruteAwalMentah.current.push(halteTanpa_)
+                
                 if (key.includes("Second") && titikAwal === halteTanpa_){
                   ruteAwalMentah.current = []
-                    
-                  }
                   ruteAwalMentah.current.push(halteTanpa_)
+                  
+                  jamRuteAwalMentah.current = []
+                  jamRuteAwalMentah.current.push(jamTerdekat)
+
+
+                  
+                }
                 // setRuteAwalMentah(ruteAwalMentah => [...ruteAwalMentah, halteTanpa_]);
                 
                 
                 if ((Object.keys(data?.semua_rute[i].halte)[Object.keys(data?.semua_rute[i].halte).length-1] === key && halteAkhir !== titikTujuan.replace(/ /g, "_") )){
                   ruteAwalMentah.current = []
+                  jamRuteAwalMentah.current = []
+                  
+                  
+                  
                 }
 
                 // if ((Object.keys(data?.semua_rute[i].halte)[Object.keys(data?.semua_rute[i].halte).length-1] !== titikTujuan)){
@@ -168,11 +253,12 @@ export default function Search(){
 
                 if(halteTanpa_ === titikTujuan && ruteAwalMentah){
                   done = true
+                  noRuteAwalMentah.current = i.toString()
                   // setRuteTujuanMentah([]);
                   // setHalteTransitTujuanMentah([]);
                   setRuteDitemukan('1')
                   setHalteTransitAwalMentah([]);
-
+                  
                   break;
                 }
                 
@@ -214,6 +300,7 @@ export default function Search(){
 
               if ((halteTanpa_=== titikTujuan && key !== Object.keys(data?.semua_rute[i].halte)[0]) ){ //jika sudah ketemu tujuan, tapi tujuan itu bukan halte pertama suatu rute, misal tujuan halte sektor 1.3
                 done2 = true
+                
                 break;
       
               }
@@ -269,9 +356,13 @@ export default function Search(){
           ruteAwalFinal.current = []
           setruteTujuanFinal([])
 
+          jamRuteAwalFinal.current = []
+          jamRuteTujuan.current = []
+
           let done = false
           let done2 = false
-          let done3 = false
+          let posisiIndex = ''
+          let posisiIndex2 = ''
 
            for (let halte of halteTransitAwalMentah){
             
@@ -290,15 +381,32 @@ export default function Search(){
                  
                   defaultState = true
 
+                  
+                  if(halteTanpa_ ===titikAwal){ // untuk ambil index array waktu yang sesuai, satu kali aja
+                    setCurrentTime(new Date().toLocaleTimeString([], options))
+                    let jamTerdekat = data?.semua_rute[ruteAwal1]?.halte[key].find(jam => jam > currentTime);
+                    let posisi = data?.semua_rute[ruteAwal1]?.halte[key].indexOf(jamTerdekat)
+                    posisiIndex = posisi
+                  }
+                  // setCurrentTime(new Date().toLocaleTimeString([], options))
+                  
+                  let jamTerdekat = data?.semua_rute[ruteAwal1]?.halte[key].at(posisiIndex)
+                  jamRuteAwalFinal.current.push(jamTerdekat)
+   
+                  
+
                   // setruteAwalFinal(rute1 => [...rute1, halteTanpa_])
                   ruteAwalFinal.current.push(halteTanpa_)
                   
-                  if ( halteAkhir === key && !halteTransitDuaRute.current.includes(halteTanpa_)){ // Jika halte terakhir di suatu rute dan tidak termasuk ke halte transit penyambung, kosongin/reset
+                  if ( halteAkhir === key && halteTransitDuaRute.current.at(-1) !== halteTanpa_){ // Jika halte terakhir di suatu rute dan tidak termasuk ke halte transit penyambung, kosongin/reset
                     ruteAwalFinal.current = []
+                    jamRuteAwalFinal.current = []
                     // setruteAwalFinal([])
                   }
                   if (halteTransitDuaRute.current.at(-1) === halteTanpa_){ //jika halte berikut sama ada di dalam halte transit penyambung paling akhir, artinya loopingnya harus selesai
                     done = true
+                    noRuteAwalFinal.current = ruteAwal1
+                    jamTerakhirRute1.current = jamTerdekat
                     break;
                   }
                   
@@ -306,9 +414,13 @@ export default function Search(){
                   if (key.includes("Second") && halteTanpa_ === titikAwal  && halteAkhir !== key ){
                     ruteAwalFinal.current = []
                     ruteAwalFinal.current.push(halteTanpa_)
+                    
+                    jamRuteAwalFinal.current = []
+                    jamRuteAwalFinal.current.push(jamTerdekat)
                     // setruteAwalFinal([])
                     // setruteAwalFinal(rute1 => [...rute1, halteTanpa_])
                   }
+                  
 
                   // if(halteTransitDuaRute.current.includes(halteTanpa_)){
                     
@@ -337,7 +449,9 @@ export default function Search(){
           
             let defaultState = false
             let ruteBack1 = halte.charAt(halte.length-1)
- 
+            let halteAkhir = Object.keys(data?.semua_rute[ruteBack1].halte)[Object.keys(data?.semua_rute[ruteBack1].halte).length-1]
+
+       
            
               for (let key in data?.semua_rute[ruteBack1]?.halte) { 
                   
@@ -349,8 +463,37 @@ export default function Search(){
                   defaultState = true
                   setruteTujuanFinal(ruteTujuanFinal => [...ruteTujuanFinal, halteTanpa_])
 
-                  if(halteTanpa_=== titikTujuan ){
+                  
+                  if(halteTransitDuaRute.current.at(-1) === halteTanpa_){ // untuk ambil index array waktu yang sesuai, satu kali aja
+                    setCurrentTime(new Date().toLocaleTimeString([], options))
+                    let jamTerdekat = data?.semua_rute[ruteBack1]?.halte[key].find(jam => jam > jamTerakhirRute1.current);
                     
+                    let posisi = data?.semua_rute[ruteBack1]?.halte[key].indexOf(jamTerdekat)
+                    posisiIndex2 = posisi
+                  }
+
+                  let jamTerdekat = data?.semua_rute[ruteBack1]?.halte[key].at(posisiIndex2)
+                  jamRuteTujuan.current.push(jamTerdekat)
+                  
+
+                  if (key.includes("Second") && halteTransitDuaRute.current.at(-1) === halteTanpa_ ){
+                    setruteTujuanFinal([])
+                    setruteTujuanFinal(ruteTujuanFinal => [...ruteTujuanFinal, halteTanpa_])
+                    
+                    jamRuteTujuan.current = []
+                    jamRuteTujuan.current.push(jamTerdekat)
+                    
+                  }
+                  // setCurrentTime(new Date().toLocaleTimeString([], options))
+                  
+                  if ( halteAkhir === key && halteTanpa_!== titikTujuan){ // Jika halte terakhir di suatu rute dan tidak termasuk ke halte transit penyambung, kosongin/reset
+                    setruteTujuanFinal([])
+                    jamRuteTujuan.current = []
+                    // setruteAwalFinal([])
+                  }
+
+                  if(halteTanpa_=== titikTujuan ){
+                    noRuteTujuan.current = ruteBack1
                     // setruteTujuanFinal(ruteTujuanFinal => [...ruteTujuanFinal, "---"]);
                     done2 = true
                     break;
@@ -363,7 +506,7 @@ export default function Search(){
                 
               }
             if (done2){
-              console.log("TEST")
+            
               setRuteDitemukan('2')
               break}
 
@@ -372,7 +515,7 @@ export default function Search(){
         }, [halteTransitAwalMentah, halteTransitTujuanMentah]);
 
 
-
+        
 
 
         useEffect(() => {
@@ -381,12 +524,15 @@ export default function Search(){
           let halteTransitAwalReformat = []
           let halteTransitTujuanReformat = []
           
+          let posisiIndex2 = ''
+          
           
           ruteAwalKetiga.current = []
           ruteTujuanKetiga.current= []
           ruteTengahMentah.current = []
           ruteTengahFinal.current = []
           // console.log("COBA",halteTransitDuaRute.current)
+          console.log("MASUK2")
 
 
           if (halteTransitDuaRute.current.length === 0){
@@ -418,19 +564,29 @@ export default function Search(){
                   
                   if (halteTransitAwalReformat.includes(halteTanpa_) || defaultState){
                     
-                    // console.log("MASUK2")
                     
                     ruteTengahMentah.current.push(halteTanpa_)
                     defaultState = true
 
+                    // if(halteTransitAwalReformat.includes(halteTanpa_)){ // untuk ambil index array waktu yang sesuai, satu kali aja
+                    //   let jamTerdekat = data?.semua_rute[i]?.halte[key].find(jam => jam > jamTerakhirRute1Ketiga.current);
+                    //   let posisi = data?.semua_rute[i]?.halte[key].indexOf(jamTerdekat)
+                    //   posisiIndex2 = posisi
+                    // }
+
+                    // let jamTerdekat = data?.semua_rute[i]?.halte[key].at(posisiIndex2)
+                    // jamTengahKetigaMentah.current?.push(jamTerdekat)
+
                     if(halteTransitTujuanReformat.includes(halteTanpa_)){
                       
+                      noRuteTengahKetiga.current = i
                       done = true
                       break;
                     }
                     
                     if (key === halteAkhir && !done){
                       ruteTengahMentah.current = []
+                
                     }
                     // console.log(ruteTengahMentah.current)
                   } 
@@ -468,8 +624,14 @@ export default function Search(){
               let haltePenyambung1= ruteTengahFinal.current[0] // Halte pertama dari ruteTengahFinal (penyambung ke rute 1)
               let haltePenyambung2 = ruteTengahFinal.current.at(-1) // Halte terakhir dari ruteTengahFinal (penyambung ke rute 2)
               let keep = []
+              let keep2 = []
               let ruteKetigaMentah = []
               
+              let posisiIndex1 = ''
+              let keepJam = []
+              let keepJam2 = []
+              let jamKetigaMentah = []
+           
 
               for (let i of ruteTitikAwal.current){
             
@@ -487,31 +649,42 @@ export default function Search(){
                       defaultState = true
     
                       keep.push(halteTanpa_)
+
+                      if(halteTanpa_ ===titikAwal){ // untuk ambil index array waktu yang sesuai, satu kali aja
+                        setCurrentTime(new Date().toLocaleTimeString([], options))
+                        let jamTerdekat = data?.semua_rute[i]?.halte[key].find(jam => jam > currentTime);
+                        let posisi = data?.semua_rute[i]?.halte[key].indexOf(jamTerdekat)
+                        posisiIndex1 = posisi
+                      }
                       
+                      let jamTerdekat = data?.semua_rute[i]?.halte[key].at(posisiIndex1)
+                      keepJam.push(jamTerdekat)
                       
                       if ( halteAkhir === key && halteTanpa_ !== haltePenyambung1){ // Jika halte terakhir di suatu rute dan tidak termasuk ke halte transit penyambung, kosongin/reset
                         keep = []
-                        
+                        keepJam.push(jamTerdekat)
                       }
                       
                       if (key.includes("Second") && halteTanpa_ === titikAwal  && halteAkhir !== key ){
-                    
+                        
                         keep = []
                         keep.push(halteTanpa_)
+
+                        keepJam = []
+                        keepJam.push(jamTerdekat)
                       }
                       
                       if (halteTanpa_ === haltePenyambung1){ //jika halte berikut sama ada di dalam halte transit penyambung paling akhir, artinya loopingnya harus selesai
                         ruteKetigaMentah.push(keep)
                         keep = []
 
-                        
+                        jamKetigaMentah.push(keepJam)
+                        keepJam = []
 
+                        jamTerakhirRute1Ketiga.current = jamTerdekat
+                        noRuteAwalKetiga.current = i
                       }
-                      
-    
-                  
                     }
-                   
                   }
                 // if (done){break}
     
@@ -520,6 +693,10 @@ export default function Search(){
               let shortest = ruteKetigaMentah.reduce((acc, subarray) => subarray.length < acc.length ? subarray : acc);
                 ruteAwalKetiga.current = shortest
                 ruteKetigaMentah=[]
+                
+              let shortestJam = jamKetigaMentah.reduce((acc, subarray) => subarray.length < acc.length ? subarray : acc);
+                jamAwalKetiga.current = shortestJam
+                jamKetigaMentah=[]
               }
 
               for (let i of ruteTitikTujuan.current){
@@ -528,42 +705,35 @@ export default function Search(){
 
                 for (let key in data?.semua_rute[i]?.halte){
             
-                 
                   let keyFix = key.replace(/_Second/g, "")
                   const halteTanpa_ = keyFix.replace(/_/g, " ");
+                  let halteAwal = Object.keys(data?.semua_rute[i].halte)[0].replace(/_Second/g, "")
                   let halteAkhir = Object.keys(data?.semua_rute[i].halte)[Object.keys(data?.semua_rute[i].halte).length-1].replace(/_Second/g, "")
+
+                  if (halteTanpa_ === haltePenyambung2 || defaultState){
                       
-                 
-                    if (halteTanpa_ === haltePenyambung2 || defaultState){
                       defaultState = true
-                      keep.push(halteTanpa_)
+                      keep2.push(halteTanpa_)
+                      // console.log("TEST1",keep2)
                       
-                      if ( halteAkhir === key && halteTanpa_ !== titikTujuan){ // Jika halte terakhir di suatu rute dan tidak termasuk ke halte transit penyambung, kosongin/reset
-                        keep = []
+                      if ( halteAkhir === key && halteAwal !== key&& halteTanpa_ !== titikTujuan){ // Jika halte terakhir di suatu rute dan tidak termasuk ke halte transit penyambung, kosongin/reset
+                        keep2 = []
                       }
 
                       if (key.includes("Second") && halteTanpa_ === haltePenyambung2  && halteAkhir !== key ){
                         
-                        keep = []
-                        keep.push(halteTanpa_)
+                        keep2 = []
+                        keep2.push(halteTanpa_)
                       }
-                      
-                      
+
                       if(halteTanpa_=== titikTujuan){
+                        noRuteAkhirKetiga.current = i
                         
-                        ruteKetigaMentah.push(keep)
-                        keep= []
+                        ruteKetigaMentah.push(keep2)
+                        keep2= []
                       } 
                     }
-      
-      
-                      
-      
-                      
                     }
-              
-      
-                
               } 
               if (ruteKetigaMentah.length>0){
                 
@@ -575,22 +745,117 @@ export default function Search(){
           }
         }, [halteTransitDuaRute.current, halteTransitAwalMentah, titikAwal, titikTujuan]);
 
+
+        useEffect(() => {
+
+          let posisiIndex1 = ''
+          let posisiIndex2 = ''
+          let keepJam1 = []
+          let keepJam2 = []
+          let defaultState = false
+          let defaultState2 = false
+          
+          for (let key in data?.semua_rute[noRuteTengahKetiga.current]?.halte){
+            
+            
+            let keyFix = key.replace(/_Second/g, "")
+            const halteTanpa_ = keyFix.replace(/_/g, " ");  
+            
+          
+            if (ruteTengahFinal.current[0]===halteTanpa_ || defaultState){
+              
+              defaultState = true
+
+              if(ruteTengahFinal.current[0]===halteTanpa_){ // untuk ambil index array waktu yang sesuai, satu kali aja
+                setCurrentTime(new Date().toLocaleTimeString([], options))
+                let jamTerdekat = data?.semua_rute[noRuteTengahKetiga.current]?.halte[key].find(jam => jam > jamTerakhirRute1Ketiga.current);
+                let posisi = data?.semua_rute[noRuteTengahKetiga.current]?.halte[key].indexOf(jamTerdekat)
+              
+                posisiIndex1 = posisi
+              }
+
+              let jamTerdekat = data?.semua_rute[noRuteTengahKetiga.current]?.halte[key].at(posisiIndex1)
+              keepJam1.push(jamTerdekat)
+
+              if (key.includes("Second") && halteTanpa_ === ruteTengahFinal.current[0]  ){
+                        
+                keepJam1 = []
+                keepJam1.push(jamTerdekat)
+              }
+
+              if(ruteTengahFinal.current.at(-1)===halteTanpa_){
+                jamTengahKetiga.current = keepJam1
+                jamTerakhirRute2Ketiga.current = jamTerdekat
+                keepJam1 = []
+                break;
+              }
+
+              
+              
+              
+            }
+          }
+
+          for (let key in data?.semua_rute[noRuteAkhirKetiga.current]?.halte){
+            
+            let keyFix = key.replace(/_Second/g, "")
+            const halteTanpa_ = keyFix.replace(/_/g, " ");
+            
+
+            if (halteTanpa_ === ruteTujuanKetiga.current[0] || defaultState2){
+                console.log(halteTanpa_,"===", ruteTujuanKetiga.current[0])
+                defaultState2 = true
+
+                if(halteTanpa_ === ruteTujuanKetiga.current[0]){ // untuk ambil index array waktu yang sesuai, satu kali aja
+                  setCurrentTime(new Date().toLocaleTimeString([], options))
+                  let jamTerdekat = data?.semua_rute[noRuteAkhirKetiga.current]?.halte[key].find(jam => jam > jamTerakhirRute2Ketiga.current);
+                  let posisi = data?.semua_rute[noRuteAkhirKetiga.current]?.halte[key].indexOf(jamTerdekat)
+                
+                  posisiIndex2 = posisi
+                }
+
+                let jamTerdekat = data?.semua_rute[noRuteAkhirKetiga.current]?.halte[key].at(posisiIndex2)
+                keepJam2.push(jamTerdekat)
+
+                if (key.includes("Second") && halteTanpa_ === ruteTujuanKetiga.current[0]  ){
+                        
+                  keepJam2 = []
+                  keepJam2.push(jamTerdekat)
+                }
+
+                if(ruteTujuanKetiga.current.at(-1)===halteTanpa_){
+                  jamAkhirKetiga.current = keepJam2
+                  keepJam2 = []
+                  break;
+                }
+
+                
+              }
+              }
+
+        },[ruteTengahFinal.current, ruteTujuanKetiga.current])
+
         useEffect(() => {
           setRuteFinal([])
           if (ruteDitemukan==='1'){
-        
-            console.log("masuk1")
             setRuteFinal(ruteAwalMentah.current)
-            
+            setJamFinal(jamRuteAwalMentah.current)
+            setNoRuteFinal([...noRuteAwalMentah.current])
             
           } else if (ruteDitemukan==='2'){
-         
-            console.log("masuk2")
             setRuteFinal(ruteAwalFinal.current.concat(ruteTujuanFinal))
-          
+            setJamFinal(jamRuteAwalFinal.current.concat(jamRuteTujuan.current))
+            setNoRuteFinal([...noRuteAwalFinal.current]?.concat([...noRuteTujuan.current]))
+            
+            
+            
           } else if (ruteDitemukan === '3'){
-            console.log('masuk3')
             setRuteFinal(ruteAwalKetiga.current.concat(ruteTengahFinal.current,ruteTujuanKetiga.current))
+            setJamFinal(jamAwalKetiga.current.concat(jamTengahKetiga.current,jamAkhirKetiga.current))
+            setNoRuteFinal([...noRuteAwalKetiga.current?.toString()]?.concat(noRuteTengahKetiga.current?.toString(),noRuteAkhirKetiga.current?.toString()))
+           
+        
+          
           }
 
 
@@ -606,7 +871,7 @@ export default function Search(){
 
   return (
     <awalTujuan.Provider value={{setTitikAwal,setTitikTujuan }}> 
-    <div className="Search">
+    <div className="Search flex">
       <Flex gap="20">
         <div className="titikAwal">
           <input
@@ -620,7 +885,7 @@ export default function Search(){
         </div>
         
         {/* titikAwalnya dapet, cuma perlu delay gabisa langsung diambil */}
-        {console.log(titikAwal,"=",ruteTitikAwal.current)} 
+        {/* {console.log(titikAwal,"=",ruteTitikAwal.current)} 
         {console.log(titikTujuan,"=",ruteTitikTujuan.current)} 
 
 
@@ -639,10 +904,19 @@ export default function Search(){
         {console.log("ruteAwalKetiga","=",ruteAwalKetiga.current)} 
         {console.log("ruteTujuanKetiga","=",ruteTujuanKetiga.current)} 
         {console.log("ruteFinal","=",ruteFinal)} 
-        {/* {console.log("halte transit 2","=",halteTransit2)} 
-        {console.log("halte transit 3","=",halteTransit3)} 
-        {console.log("Rute Lalu","=",halteLalu)}  */}
-        {console.log("====================================")} 
+        {console.log("JAM 0","=",jamRuteAwalMentah.current)} 
+        {console.log("JAM 1 JADI","=",jamRuteAwalFinal.current)} 
+        {console.log("JAM TERAKHIR","=",jamTerakhirRute1.current)} 
+        {console.log("JAM 2","=",jamRuteTujuan.current)} 
+        {console.log("JAM TERAKHIR 3.1","=",jamTerakhirRute1Ketiga.current)} 
+        {console.log("JAM TERAKHIR 3.2","=",jamTerakhirRute2Ketiga.current)} 
+        {console.log("JAM Awal Ketiga","=",jamAwalKetiga.current)} 
+        {console.log("JAM Tengah Ketiga","=",jamTengahKetiga.current)} 
+        {console.log("JAM Akhir Ketiga","=",jamAkhirKetiga.current)}  */}
+        {/* {console.log("JAM FINAL","=",jamFinal)} 
+        {console.log("====================================")}  */}
+
+        {console.log(ruteFinal)}
 
         <div className="tujuan">
           <input

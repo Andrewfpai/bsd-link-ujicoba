@@ -64,9 +64,9 @@ function Search() {
     return (
 
 
-        <div className='bg-lychee h-screen container mx-auto text-center flex flex-1 grow testdlu'>
+        <div className='bg-lychee h-full container mx-auto text-center flex flex-1 grow'>
 
-          <div className="flex flex-col ">
+          {/* <div className="flex justify-center flex-col min-h-screen parent relative"> */}
 
 
   
@@ -80,6 +80,59 @@ function Search() {
 
           
 
+
+       
+          {/* <div className="-mt-5 border-teal border-2 bg-white rounded-[25px] relative border-teal text-gray-600 focus-within:text-gray-400">
+            <div className="">Sea</div> */}
+
+            {/* <div class="flex bg-lychee items-center justify-center mt-7">
+
+                <div className="flex items-center mr-2">
+                    <img className="w-6" src={BackIcon} alt="Menu icon"/>
+                </div>
+
+                <div class="flex flex-col border border-2 rounded-lg divide-y bg-black/10">
+
+                <div class="relative focus-within:text-gray-400 mb-2">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-2">
+                    <button type="submit" class="p-1 focus:outline-none focus:shadow-outline">
+                        <svg fill="none" stroke="#43a3a2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" class="w-6 h-6"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </button>
+                    </span>
+                    <div ref={inputRef}>
+                    <input
+                        autoFocus
+                        type="search"
+                        value={search}
+                        onChange={(e) => {setSearch(e.target.value);}}
+                        class=" py-2 border-none text-sm text-white bg-transparent rounded-[25px] pl-10 focus:outline-none focus:bg-white focus:text-gray-900" placeholder="Your Location..." autocomplete="off"
+                        />
+                 
+                    </div>
+                </div>
+
+                <div>TEST</div> */}
+
+            
+              {/* <div class="relative focus-within:text-gray-400">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-2">
+                  <button type="submit" class="p-1 focus:outline-none focus:shadow-outline">
+                    <svg fill="none" stroke="#43a3a2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" class="w-6 h-6"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                  </button>
+                </span>
+                <div ref={inputRef}>
+                <input
+                    autoFocus
+                    type="search"
+                    value={search}
+                    onChange={(e) => {setSearch(e.target.value);}}
+                    class=" py-2 border-2 border-teal text-sm text-white bg-white rounded-[25px] pl-10 focus:outline-none focus:bg-white focus:text-gray-900" placeholder="Search Your Destination..." autocomplete="off"
+                    />
+                </div>
+              </div> */}
+
+            {/* </div>
+            </div> */}
             <div className="flex flex-col justify-center flex-1 mt-10 mb-10 w-[21rem] mx-auto bg-black/10 rounded-[25px] p-7">
             {filteredData.map((item, index) => {
             console.log("TEST",filteredData)
@@ -87,9 +140,9 @@ function Search() {
           })}
             </div>
 
-            
+            <div className="flex flex-1 grow bg-lychee h-full"></div>
       
-            </div>
+  
         {/* </div> */}
    
         </div>
