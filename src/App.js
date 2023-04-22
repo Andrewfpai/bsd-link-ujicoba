@@ -15,7 +15,7 @@ import Search from './pages/Search'
 import MyRoute from './pages/Route'
 import NoPage from './pages/NoPage'
 import RouteNotFound from './components/RouteNotFound'
-
+import PageTransition from './components/pageTransition'
 
 import ruteContext from './context/ruteContext'
 
@@ -38,8 +38,9 @@ function App() {
           <div className="font-Poppins">
           
 
+            <PageTransition>
           <Routes>
-            
+          
             <Route exact path="/" element={<Home />}/>
             <Route path="/information" element={<Information />} />
             <Route path="/detail" element={<CardInfo />} />
@@ -49,8 +50,8 @@ function App() {
             <Route path="/aboutUs" element={<AboutUs />} />
             <Route path="/aboutBSDLink" element={<AboutBSDLink />} />
             <Route path="/*" element={<NoPage />} />
-            
           </Routes>
+            </PageTransition>
             
           </div>
 

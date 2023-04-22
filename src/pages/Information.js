@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import Logo from '../assets/image/Logo.png'
 import Menu from '../assets/icon/hamburger.png'
 import Navbar from '../components/navbar'
+import { motion } from "framer-motion";
 
 
 
@@ -37,9 +38,14 @@ function Information() {
 
 
   
-
+      <motion.nav
+          initial={{ y: -100, opacity:0 }}
+          animate={{ y: 0, opacity:1}}
+          transition={{ type: "spring", stiffness: 120, duration: 0.5, damping:20, delay:0.3}}
+        >
           <div className="mt-10 pb-16 text-4xl font-bold text-center leading-tight z-0 text-center">Where would you <br/> like to go?</div>
-     
+          </motion.nav>
+ 
 
         <div className="bottomter flex-1 bg-lychee">
           {/* <div className="-mt-5 border-teal border-2 bg-white rounded-[25px] relative border-teal text-gray-600 focus-within:text-gray-400">

@@ -6,6 +6,64 @@ import ruteContext from '../context/ruteContext'
 import Accordion from '../components/accordion'
 import BusTimer from '../components/busTimer'
 import RouteNotFound from '../components/RouteNotFound'
+import PageTransition from '../components/pageTransition'
+import { motion } from "framer-motion";
+
+
+const pageVariants = {
+  initial: {
+    x: "-100vw",
+    opacity: 0,
+  },
+  animate: {
+    x: 0,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 80,
+      damping: 20,
+      duration: 1,
+    },
+  },
+ 
+};
+
+const pageVariants2 = {
+    initial: {
+      y: "-10px",
+      opacity: 0,
+    },
+    animate: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 120,
+        damping: 20,
+        duration: 0.5,
+        delay:1.1
+      },
+    },
+   
+  };
+const pageVariants3 = {
+    initial: {
+      y: "-10px",
+      opacity: 0,
+    },
+    animate: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 120,
+        damping: 20,
+        duration: 1,
+        delay:2
+      },
+    },
+   
+  };
 
 function MyRoute() {
     const {ruteFinal} = useContext(ruteContext);
@@ -15,14 +73,22 @@ function MyRoute() {
 
     
     return(
-      <div>
+        
+        <div>
 
             
         
             
 
         <div className={(jamFinal?.at(0))?.at(0)?'hidden':'block'}>
+            <motion.div
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+        >
             <RouteNotFound />
+            </motion.div>
         </div>
 
         <div className={(jamFinal?.at(0))?.at(0)?'bg-lychee h-screen  container mx-auto text-center ':'hidden'}>
@@ -40,6 +106,12 @@ function MyRoute() {
                 </div>
 
                 <div className='flex flex-col'>
+                    <motion.div
+                        variants={pageVariants}
+                        initial="initial"
+                        animate="animate"
+                        exit="exit"
+                    >
                     <div className="flex flex-row items-center ml-5">
 
                         <div class="flex items-center flex-col mr-3">
@@ -52,6 +124,13 @@ function MyRoute() {
                             <div>{(ruteFinal?.at(-1))?.at(-1)}</div>
                         </div>
                     </div>   
+                    </motion.div>
+                    <motion.div
+                    variants={pageVariants2}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    >
                         
                     <div className="flex flex-row items-center text-14 ml-12 mt-2 pb-10">
                 
@@ -62,6 +141,7 @@ function MyRoute() {
                             <div>Arrival at {(jamFinal?.at(-1)?.at(-1))}</div>
                         </div>
                     </div>
+                    </motion.div>
                     
                 </div>
                 
@@ -69,18 +149,23 @@ function MyRoute() {
 
             <div className="bottomter flex flex-col flex-1 bg-lychee pb-32">
           
-               
+                
                 <BusTimer busArrivalTime={(jamFinal?.at(0)?.at(0))}/>
-       
+                
 
                 {/* <div className='mt-7 mb-5 text-3xl font-semibold text-center'>ROUTES:</div> */}
                     <div className="flex mx-auto justify-center">
               
 
                 
-           
-                
+            
                     <div className='mt-7'>
+                    <motion.div
+                        variants={pageVariants3}
+                        initial="initial"
+                        animate="animate"
+                        exit="exit"
+                    >
        
                         <div className={ruteFinal.length>0?"flex flex-col mb-2":"hidden"}>
                             <div className='text-20 text-gray-500 text-left mb-1'>Route 1:</div>
@@ -119,6 +204,7 @@ function MyRoute() {
                                 </div>
                             </div>
                         </div>
+                    </motion.div>
 
                         <div className="left-0 bottom-0 w-full bg-teal fixed pb-3 pt-3">
                             <div className="flex flex-row justify-around items-center">
@@ -139,6 +225,7 @@ function MyRoute() {
       </div>
       </div>
       </div>
+     
   )
 }
 

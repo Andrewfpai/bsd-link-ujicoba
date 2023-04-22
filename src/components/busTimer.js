@@ -2,7 +2,26 @@ import React, { useState, useEffect,useContext} from 'react';
 import ruteContext from '../context/ruteContext'
 import RouteNotFound from '../components/RouteNotFound'
 import { useNavigate, useLocation } from 'react-router-dom';
+import { motion } from "framer-motion";
 
+const pageVariants3 = {
+  initial: {
+    y: "-10px",
+    opacity: 0,
+  },
+  animate: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 120,
+      damping: 20,
+      duration: 1,
+      delay:1.6
+    },
+  },
+ 
+};
 
 const BusTimer = ({ busArrivalTime }) => {
     const {jamFinal} = useContext(ruteContext);
@@ -93,6 +112,12 @@ const BusTimer = ({ busArrivalTime }) => {
 
   return (
     <div className="flex mx-auto justify-center -mt-8 " >
+        <motion.div
+                    variants={pageVariants3}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                >
         <div class="bg-white w-80 py-1 flex-grow flex flex-1 flex-row rounded-lg justify-around overflow-hidden shadow-lg font-Lato">
             <div>
                 <span className='text-gray-400 font-Poppins'>Next Bus: </span><br/>
@@ -106,6 +131,7 @@ const BusTimer = ({ busArrivalTime }) => {
                 <span className='font-bold text-3xl'> {minutesFinal}<span className='font-normal text-gray-400 text-14'> M</span></span>
             </div>
         </div>
+        </motion.div>
     </div>
   );
 };
