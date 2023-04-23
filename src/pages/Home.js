@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence  } from "framer-motion";
 import PageTransition from '../components/pageTransition'
 
 
@@ -32,20 +32,38 @@ function Home() {
       <Navbar sendDataToHome={sendDataToHome} />
       <div className="container mx-auto text-center  flex flex-col justify-center -mb-12 desktop:-mb-32">
         <div className="mt-20 z-10 desktop:mt-32">
+
         <motion.nav
           initial={{ y: 100, opacity:0 }}
           animate={{ y: 0, opacity:1}}
-          transition={{ type: "spring", stiffness: 100, duration: 1.5, delay:0.5}}
+          transition={{ type: "spring", stiffness: 100, duration: 2, delay:1}}
+     
         >
 
-          <div className="text-4xl text-lychee font-semibold -mt-5 mb-5 leading-tight desktop:text-[7rem] desktop:font-bold">Route Your <span className='text-darkTeal'>Journey</span><br className="block desktop:hidden"/> With Ease!</div>
+          {/* <div className="text-4xl text-lychee font-semibold -mt-5 mb-5 leading-tight desktop:text-[7rem] desktop:font-bold desktop:-mt-16 desktop:mb-10">
+          <div className="whitespace-nowrap"><motion.div whileHover={{ scale: 1.2 }}>Route</motion.div> <motion.div whileHover={{ scale: 1.2 }}>Your</motion.div> <span className='text-darkTeal'>Journey</span></div><br className="block desktop:hidden"/> 
+          With Ease!
+          </div> */}
+
+          <div className="text-4xl text-lychee font-semibold -mt-5 mb-5 leading-tight flex flex-col desktop:text-[7rem] desktop:font-bold desktop:-mt-16 desktop:mb-10">
+            <div className="flex flex-row justify-center ">
+              <motion.div whileHover={{ scale: 1.1 }} className="mr-2 desktop:mr-5">Route</motion.div>
+              <motion.div whileHover={{ scale: 1.1 }} className="mr-2 desktop:mr-5"> Your</motion.div>
+              <motion.div whileHover={{ scale: 1.1 }} className="text-darkTeal"> Journey</motion.div>
+            </div>
+            <div className="flex flex-row justify-center">
+              <motion.div whileHover={{ scale: 1.1 }} className="mr-2 desktop:mr-5"> With</motion.div>
+              <motion.div whileHover={{ scale: 1.1 }}> Ease!</motion.div>
+            </div>
+          </div>
           
           
           <button onClick={()=>{navigate('/information')}} 
-          className="border border-2 border-darkTeal text-lychee bg-darkTeal hover:bg-transparent hover:text-darkTeal mt-2 font-bold py-2 px-10 rounded-full desktop:py-3 desktop:px-16 desktop:text-2xl">
+          className="border border-2 border-darkTeal text-lychee bg-darkTeal hover:bg-transparent hover:text-darkTeal mt-2 font-semibold py-2 px-10 rounded-full desktop:py-3 desktop:px-16 desktop:text-2xl">
             GET STARTED
           </button>
         </motion.nav>
+   
         </div>
       </div>
       <div className="flex flex-1 items-end z-0">

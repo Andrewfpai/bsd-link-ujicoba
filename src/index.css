@@ -11,6 +11,10 @@
 }
 
 
+::-webkit-scrollbar {
+  display: none;
+}
+
 .testdlu{
   margin:0;
   padding:0;

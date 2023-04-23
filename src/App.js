@@ -3,14 +3,14 @@ import {useState, useRef} from 'react'
 import {Routes, Route } from "react-router-dom";
 
 // import Search from './components/search'
-import DisplayRoute from './components/displayRoute'
+
 
 import Information from './pages/Information'
 import Home from './pages/Home'
 import AboutUs from './pages/aboutUs'
 import AboutBSDLink from './pages/aboutBSDLink'
 import CardInfo from './pages/CardInfo'
-// import Search from './components/algorithm'
+
 import Search from './pages/Search'
 import MyRoute from './pages/Route'
 import NoPage from './pages/NoPage'
@@ -49,6 +49,7 @@ function App() {
             <Route path="/routeNotFound" element={<RouteNotFound />} />
             <Route path="/aboutUs" element={<AboutUs />} />
             <Route path="/aboutBSDLink" element={<AboutBSDLink />} />
+
             <Route path="/*" element={<NoPage />} />
           </Routes>
             </PageTransition>

@@ -1,7 +1,6 @@
-import Back from '../assets/icon/back.png'
-import Clock from '../assets/icon/clock.png'
-import {useState, useEffect, useRef, useContext, useMemo, useCallback} from 'react'
-import { useNavigate } from 'react-router-dom';
+
+import {useState, useContext} from 'react'
+
 import ruteContext from '../context/ruteContext'
 import { useQuery } from '@tanstack/react-query'
 
@@ -26,12 +25,12 @@ function Accordion({noRute, panjangRute}) {
 
     return(   
 
-        <div className="flex flex-col bg-teal min-w-[22rem] max-w-[23rem] px-6 text-lychee rounded-lg">
+        <div className="flex flex-col bg-teal min-w-[22rem] desktop:min-w-[25rem] desktop:max-w-[26rem] max-w-[23rem] px-6 text-lychee rounded-lg">
             <div
                 className={isOpen?"flex items-center justify-between py-2 cursor-pointer border-b border-gray-300":"flex items-center justify-between py-2 cursor-pointer"}
                 onClick={toggleAccordion}
             >
-                <h2 className="text-lg font-medium">{data && data.semua_rute && data.semua_rute[noRute] && data?.semua_rute[noRute]?.judul_rute}</h2>
+                <h2 className="text-lg font-medium desktop:text-2xl">{data && data.semua_rute && data.semua_rute[noRute] && data?.semua_rute[noRute]?.judul_rute}</h2>
                 <svg
                 className={`w-6 h-6 transition-transform ${
                     isOpen ? "transform rotate-180" : ""
@@ -54,13 +53,13 @@ function Accordion({noRute, panjangRute}) {
                 isOpen ? "h-full" : "max-h-0"
                 }`}
             >
-                <div className='flex flex-row justify-between mt-4 text-gray-300 pb-2'>
+                <div className='flex flex-row justify-between mt-4 text-gray-300 pb-2 desktop:text-20'>
                     <div className='text-left'>
                     {ruteFinal[panjangRute]?.map((halte,index)=>{
                         return <p className='mb-1 text-gray-100'>{halte}</p>
                     })}
                     </div>
-                    <div className='flex text-left flex-col'>
+                    <div className='flex text-left flex-col desktop:text-20'>
                 
                     {jamFinal[panjangRute]?.map((jam,index)=>{
                         return <p className='mb-1 '>{jam}</p>

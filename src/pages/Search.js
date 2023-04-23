@@ -11,7 +11,7 @@ function Search() {
   });
 
     return(
-      <div>
+      <div className="overflow-y-hidden scrollbar-none">
         <motion.div className="progress-bar" style={{ scaleX }} />
         <Algorithm/>
       </div>

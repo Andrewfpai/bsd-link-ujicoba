@@ -2,9 +2,9 @@ import {useState, useEffect, useRef, useContext, useMemo, useCallback} from 'rea
 import { useQuery } from '@tanstack/react-query'
 import useDebounce from '../hooks/useDebounce'
 // import useCreateRoute from '../hooks/useCreateRoute'
-import { Flex, Spacer } from '@chakra-ui/react'
+
 import ruteContext from '../context/ruteContext'
-import awalTujuan from '../context/awalTujuan'
+
 import Destination from '../assets/icon/target.png'
 import CurrentLoc from '../assets/icon/location.png'
 import Cancel from '../assets/icon/cancel.png'
@@ -26,7 +26,7 @@ export default function Search(){
 
   const options = { timeZone: "Asia/Jakarta", hour: "numeric", minute: "numeric", second: "numeric", hour12: false };
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString([], options));
-  // const [currentTime, setCurrentTime] = useState("20:00");
+  // const [currentTime, setCurrentTime] = useState("06:00");
  
 
   const noRuteAwalMentah = useRef([])
@@ -102,7 +102,7 @@ export default function Search(){
 
     useEffect(() => {
       inputRef?.current?.focus()
-      console.log(state)
+    
       if (state !== null){
         setTitikTujuan(state?.data?.data?.[state?.index]?.destination)
         setSearch2(state?.data?.data?.[state?.index]?.destination)
@@ -226,7 +226,7 @@ export default function Search(){
                 if(halteTanpa_ ===titikAwal && titikTujuan){ // untuk ambil index array waktu yang sesuai
                   setCurrentTime(new Date().toLocaleTimeString([], options))
                   let jamTerdekat = data?.semua_rute[i]?.halte[key].find(jam => jam > currentTime);
-              
+                 
                   
                   if (jamTerdekat){
                     let posisi = data?.semua_rute[i]?.halte[key].indexOf(jamTerdekat)
@@ -234,7 +234,7 @@ export default function Search(){
                   }
                 }
                 
-                let jamTerdekat = posisiIndex?(data?.semua_rute[i]?.halte[key].at(posisiIndex)):null
+                let jamTerdekat = posisiIndex||posisiIndex===0?(data?.semua_rute[i]?.halte[key].at(posisiIndex)):null
                 jamRuteAwalMentah.current.push(jamTerdekat)
                 
                 
@@ -415,7 +415,7 @@ export default function Search(){
                   }
                
                   
-                  let jamTerdekat = posisiIndex?(data?.semua_rute[ruteAwal1]?.halte[key].at(posisiIndex)):null
+                  let jamTerdekat = posisiIndex||posisiIndex===0?(data?.semua_rute[ruteAwal1]?.halte[key].at(posisiIndex)):null
                   jamRuteAwalFinal.current.push(jamTerdekat)
    
                   
@@ -447,20 +447,7 @@ export default function Search(){
                   }
                   
 
-                  // if(halteTransitDuaRute.current.includes(halteTanpa_)){
-                    
-                  //   setRute1(rute1 => [...rute1, "---"]);
-              
-                  //   // break;
-                  //   console.log("BREAK")
-
-                  //   if (halteTransitDuaRute.current.at(-1) === halteTanpa_){ //jika halte berikut sama ada di dalam halte transit penyambung paling akhir, artinya loopingnya harus selesai
-                  //     done = true
-                  //     break;
-                  //   }
-
-                    
-                  // }
+                
                 }
                
               }
@@ -499,7 +486,8 @@ export default function Search(){
                     }
                   }
 
-                  let jamTerdekat = posisiIndex?(data?.semua_rute[ruteBack1]?.halte[key].at(posisiIndex2)):null
+                  let jamTerdekat = posisiIndex2||posisiIndex2===0?(data?.semua_rute[ruteBack1]?.halte[key].at(posisiIndex2)):null
+               
                   jamRuteTujuan.current.push(jamTerdekat)
                   
 
@@ -558,8 +546,8 @@ export default function Search(){
           ruteTujuanKetiga.current= []
           ruteTengahMentah.current = []
           ruteTengahFinal.current = []
-          // console.log("COBA",halteTransitDuaRute.current)
-          console.log("MASUK2")
+     
+      
 
 
           if (halteTransitDuaRute.current.length === 0){
@@ -577,7 +565,7 @@ export default function Search(){
 
             
             for (let i = 0; i < data?.semua_rute.length; i++) {
-              // console.log(i)
+         
               let defaultState = false
               let halteAkhir = Object.keys(data?.semua_rute[i].halte)[Object.keys(data?.semua_rute[i].halte).length-1]
 
@@ -615,7 +603,7 @@ export default function Search(){
                       ruteTengahMentah.current = []
                 
                     }
-                    // console.log(ruteTengahMentah.current)
+                  
                   } 
                   
               }// end loop
@@ -629,16 +617,16 @@ export default function Search(){
 
               if (ruteTengahMentah.current.length !== 0){
                   
-                // console.log("BREAK",ruteTengahMentah.current.slice().reverse())
+           
                 for (let halte of ruteTengahMentah.current.slice().reverse()){
                 
                   
-                  // console.log("halte",halte)
+                
                   ruteTengahFinal.current.push(halte)
                   
                   
                   if (halteTransitAwalReformat.includes(halte)){
-                    // console.log("halte",halte)
+             
                     ruteTengahFinal.current.reverse()
                     break
                   }
@@ -688,7 +676,7 @@ export default function Search(){
                         }
                       }
                       
-                      let jamTerdekat = posisiIndex1?(data?.semua_rute[i]?.halte[key].at(posisiIndex1)):null
+                      let jamTerdekat = posisiIndex1||posisiIndex1===0?(data?.semua_rute[i]?.halte[key].at(posisiIndex1)):null
                       keepJam.push(jamTerdekat)
                       
                       if ( halteAkhir === key && halteTanpa_ !== haltePenyambung1){ // Jika halte terakhir di suatu rute dan tidak termasuk ke halte transit penyambung, kosongin/reset
@@ -745,7 +733,7 @@ export default function Search(){
                       
                       defaultState = true
                       keep2.push(halteTanpa_)
-                      // console.log("TEST1",keep2)
+                    
                       
                       if ( halteAkhir === key && halteAwal !== key&& halteTanpa_ !== titikTujuan){ // Jika halte terakhir di suatu rute dan tidak termasuk ke halte transit penyambung, kosongin/reset
                         keep2 = []
@@ -808,7 +796,7 @@ export default function Search(){
                 }
               }
 
-              let jamTerdekat = posisiIndex1?(data?.semua_rute[noRuteTengahKetiga.current]?.halte[key].at(posisiIndex1)):null
+              let jamTerdekat = posisiIndex1||posisiIndex1===0?(data?.semua_rute[noRuteTengahKetiga.current]?.halte[key].at(posisiIndex1)):null
               keepJam1.push(jamTerdekat)
 
               if (key.includes("Second") && halteTanpa_ === ruteTengahFinal.current[0]  ){
@@ -837,7 +825,7 @@ export default function Search(){
             
 
             if (halteTanpa_ === ruteTujuanKetiga.current[0] || defaultState2){
-                console.log(halteTanpa_,"===", ruteTujuanKetiga.current[0])
+                
                 defaultState2 = true
 
                 if(halteTanpa_ === ruteTujuanKetiga.current[0]){ // untuk ambil index array waktu yang sesuai, satu kali aja
@@ -850,7 +838,7 @@ export default function Search(){
                   }
                 }
 
-                let jamTerdekat = posisiIndex2?(data?.semua_rute[noRuteAkhirKetiga.current]?.halte[key].at(posisiIndex2)):null
+                let jamTerdekat = posisiIndex2||posisiIndex2===0?(data?.semua_rute[noRuteAkhirKetiga.current]?.halte[key].at(posisiIndex2)):null
                 keepJam2.push(jamTerdekat)
 
                 if (key.includes("Second") && halteTanpa_ === ruteTujuanKetiga.current[0]  ){
@@ -910,27 +898,29 @@ export default function Search(){
   return (
 
     
+
+    
     // <awalTujuan.Provider value={{setTitikAwal,setTitikTujuan }}> 
     <div className='bg-white h-screen container mx-auto text-center flex flex-1 grow flex-col'>
 
         <div className="flex-1 overflow-y-auto mt-7 w-full border-b border-gray-500">
         <div className="flex flex-col">
         
-          <div className="flex flex-col mx-auto mb-7 ">
-            <div className="flex items-centers mb-5">
-              <div className="my-auto ">
-              <img className="w-4 mr-2 mx-auto" src={Cancel} alt="Menu icon" onClick={()=>{navigate('/information')}}/>
+          <div className="flex flex-col mx-auto mb-7 desktop:mb-12">
+            <div className="flex items-centers mb-5 desktop:mb-8">
+              <div className="my-auto cursor-pointer">
+              <img className="w-4 mr-2 mx-auto desktop:w-10" src={Cancel} alt="Menu icon" onClick={()=>{navigate('/information')}}/>
               </div>
-              <div className="text-20 font-semibold">Set Location & Destination</div>
+              <div className="text-20 font-semibold desktop:text-5xl desktop:ml-7">Set Location & Destination</div>
             </div>
 
             <div className="">
 
-              <div className="flex flex-row bg-gray-100 border-2 rounded-[25px] pr-6 pl-4 gap-3">
+              <div className="flex flex-row bg-gray-100 border-2 rounded-[25px] pr-6 pl-4 gap-3   desktop:gap-8  desktop:py-3 ">
               
-                <div className="flex flex-col my-auto gap-4">
-                  <img className="w-6" src={CurrentLoc} alt="Back icon"/>
-                  <img className="w-5" src={Destination} alt="Menu icon"/>
+                <div className="flex flex-col my-auto gap-4 desktop:gap-6">
+                  <img className="w-6 desktop:w-12" src={CurrentLoc} alt="Back icon"/>
+                  <img className="w-5 desktop:w-10" src={Destination} alt="Menu icon"/>
 
                 </div>
 
@@ -943,7 +933,7 @@ export default function Search(){
                     value={search}
                     onChange={handleChange}
                     onFocus={()=>{setDataOn(true)}}
-                    className="text-16 text-black flex items-centers py-2 text-sm bg-transparent rounded-[25px] border-transparent focus:border-transparent focus:ring-0"
+                    className="text-16 desktop:text-2xl text-black flex items-centers py-2 text-sm bg-transparent rounded-[25px] border-transparent focus:border-transparent focus:ring-0 desktop:mb-2 desktop:pr-48"
                     placeholder="Your location..."
                     autoComplete="off"
                     ref={inputRef}
@@ -959,7 +949,7 @@ export default function Search(){
                   onChange={handleChange2}
                   value={search2}
                   onFocus={()=>{setDataOn(false)}}
-                  className="text-16 text-black flex items-centers py-2 text-sm bg-transparent rounded-[25px] border-transparent focus:border-transparent focus:ring-0 "
+                  className="text-16 desktop:text-2xl text-black flex items-centers py-2 text-sm bg-transparent rounded-[25px] border-transparent focus:border-transparent focus:ring-0 desktop:mt-2 desktop:pr-48"
                   placeholder="Search your destination..."
                   autoComplete="off"
                   
@@ -976,10 +966,10 @@ export default function Search(){
           </div>
           </div>
         
-          <div className={dataOn?"flex flex-col justify-center mb-10 mx-auto  p-7 min-w-16":'hidden'}>
+          <div className={dataOn?"flex flex-col justify-center mb-10 mx-auto  p-7 min-w-16 desktop:grid desktop:grid-cols-3 desktop:gap-8":'hidden'}>
           {filteredData.map((item) => (
             <p
-              className='text-lychee bg-darkTeal px-5 py-5 mb-4 rounded-[10px]'
+              className='text-lychee bg-darkTeal px-5 py-5 mb-4 rounded-[10px] cursor-pointer desktop:text-20 desktop:-mb-2'
               key={item}
               onClick={()=>{
                 setTitikAwal(item)
@@ -991,11 +981,11 @@ export default function Search(){
             </p>
           ))}
         </div>
-        <div className={dataOn?'hidden':"flex flex-col justify-center mb-10 mx-auto  p-7 min-w-16"}>
+        <div className={dataOn?'hidden':"flex flex-col justify-center mb-10 mx-auto  p-7 min-w-16 desktop:grid desktop:grid-cols-3 desktop:gap-8"}>
           {filteredData2.map((item) => (
             <p
               
-              className='text-lychee bg-darkTeal px-5 py-5 mb-4 rounded-[10px]'
+              className='text-lychee bg-darkTeal px-5 py-5 mb-4 rounded-[10px] cursor-pointer  desktop:text-20 desktop:-mb-2'
               key={item}
               onClick={()=>{setTitikTujuan(item)
                 setSearch2(item)

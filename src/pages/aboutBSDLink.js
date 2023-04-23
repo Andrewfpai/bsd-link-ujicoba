@@ -1,19 +1,11 @@
 import React, {useState} from 'react'
-import { useNavigate } from "react-router-dom";
-import Pai from '../assets/image/profile-picture-pai.jpg'
-import Opin from '../assets/image/profile-picture-opin.jpg'
 
 
-
-import PictureBackground from '../assets/image/background.png'
-import Logo from '../assets/image/Logo.png'
-import Bus from '../assets/image/Bus.png'
 import Navbar from '../components/navbar'
 
 
 function AboutUs() {
 
-  const navigate = useNavigate();
   const [isNavbarClicked, setIsNavbarClicked] = useState(false)
 
   function sendDataToHome(isClicked){

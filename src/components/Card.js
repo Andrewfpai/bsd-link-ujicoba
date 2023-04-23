@@ -1,8 +1,7 @@
 import React from 'react'
-import { useQuery } from '@tanstack/react-query'
+
 import { useNavigate } from 'react-router-dom';
 
-import Logo from '../assets/image/Logo.png'
 
 
 
@@ -23,20 +22,20 @@ function Card({data, index}) {
 
 
   return (
-    <div className="flex justify-center " onClick={handleClick}>
+    <div className="flex justify-center hover:opacity-70 cursor-pointer" onClick={handleClick}>
     
 
-        <div class="w-80 ml-8 flex-grow flex flex-1 flex-col border-3 border-l border-r border-b rounded-[25px] overflow-hidden shadow-lg">
+        <div class="w-80 ml-8 flex-grow flex flex-1 flex-col border-3 border-l border-r border-b rounded-[25px] overflow-hidden shadow-lg desktop:w-[30rem]">
           
         
-              <img class="w-full flex-grow flex-1" src= {data && data[index] && data[index].images} alt="Favorite places images"/>
+              <img class="w-full h-52 object-cover flex-grow flex-1 desktop:h-[20rem]" src= {data && data[index] && data[index].images} alt="Favorite places images"/>
        
 
             <div className="flex flex-col grow flex-1">
             
               <div class="px-6 py-4 text-center">
-                  <div class="font-bold text-2xl -mb-1">{data &&data[index] && data[index].name}</div>
-                  <p class="text-gray-400 text-16">
+                  <div class="font-bold text-2xl -mb-1 desktop:text-4xl desktop:font-semibold">{data &&data[index] && data[index].name}</div>
+                  <p class="text-gray-400 text-16 desktop:text-2xl">
                   {data && data[index] && data[index].category}
                   </p>
               </div>

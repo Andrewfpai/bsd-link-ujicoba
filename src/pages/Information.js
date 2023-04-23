@@ -2,8 +2,7 @@ import React, {useState} from 'react'
 import { useQuery } from '@tanstack/react-query'
 import Card from '../components/Card'
 import { useNavigate } from 'react-router-dom';
-import Logo from '../assets/image/Logo.png'
-import Menu from '../assets/icon/hamburger.png'
+
 import Navbar from '../components/navbar'
 import { motion } from "framer-motion";
 
@@ -27,12 +26,12 @@ function Information() {
 
     function sendDataToHome(isClicked){
       setIsNavbarClicked(isClicked)
-      console.log(isClicked)
+
     }
      
 
   return (
-    <div className='bg-yellow h-screen  container mx-auto text-center '>
+    <div className='bg-yellow h-screen desktop:h-full sm:container mx-auto text-center '>
       <div className="flex justify-center flex-col h-full parent relative">
       <Navbar className='z-50' sendDataToHome={sendDataToHome}/>
 
@@ -43,7 +42,7 @@ function Information() {
           animate={{ y: 0, opacity:1}}
           transition={{ type: "spring", stiffness: 120, duration: 0.5, damping:20, delay:0.3}}
         >
-          <div className="mt-10 pb-16 text-4xl font-bold text-center leading-tight z-0 text-center">Where would you <br/> like to go?</div>
+          <div className="mt-10 pb-16 text-4xl font-semibold text-center leading-tight z-0 text-center desktop:text-[5rem]">Where would you <br /> like to go?</div>
           </motion.nav>
  
 
@@ -51,21 +50,32 @@ function Information() {
           {/* <div className="-mt-5 border-teal border-2 bg-white rounded-[25px] relative border-teal text-gray-600 focus-within:text-gray-400">
             <div className="">Sea</div> */}
 
-            <div class="flex items-center justify-center" onClick={()=>{navigate('/search')}}>
+            <div class="flex items-center justify-center desktop:hidden" onClick={()=>{navigate('/search')}}>
               <div class="relative  -mt-5 focus-within:text-gray-400">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-2">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-2 desktop:pl-5">
                   <button type="submit" class="p-1 focus:outline-none focus:shadow-outline">
                     <svg fill="none" stroke="#43a3a2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" class="w-6 h-6"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                   </button>
                 </span>
-                <input type="search" name="q" class="py-2 border-2 border-teal text-sm text-white bg-white rounded-[25px] pl-10 focus:outline-none focus:bg-white focus:text-gray-900" placeholder="Search Your Destination..." autocomplete="off"/>
+                <input type="search" name="q" class="py-2 border-2 border-teal text-sm text-white bg-white rounded-[25px] pl-10 focus:outline-none focus:bg-white focus:text-gray-900 desktop:py-4 desktop:px-32 desktop:text-20" placeholder="Search Your Destination..." autocomplete="off"/>
               </div>
             </div>
 
-            <div className="text-2xl font-extralight text-left ml-10 mt-10 mb-3">Top Places :</div>
+            <motion.div whileHover={{ scale: 1.1 }}>
+              <div class="items-center justify-center hidden desktop:flex" onClick={()=>{navigate('/search')}}>
+                <div class="relative  -mt-5 focus-within:text-gray-400">
+                  <button class="bg-teal px-10 py-2 flex flex-row items-center rounded-[25px] text-lychee">
+                  <svg fill="none" stroke="#fff7ec" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" class="w-6 h-6"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <span className='text-2xl ml-5'>Search Your Destination</span>
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+
+            <div className="text-2xl font-extralight text-left ml-10 mt-10 mb-3 desktop:text-4xl desktop:ml-20">Top Places :</div>
 
 
-            <div class="flex overflow-x-scroll pb-10 hide-scroll-bar">
+            <div class="flex overflow-x-scroll pb-10 hide-scroll-bar desktop:ml-10">
           
           
 
